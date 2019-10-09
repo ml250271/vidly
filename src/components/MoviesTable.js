@@ -1,49 +1,43 @@
 import React from "react";
+import Table from "./common/Table";
 import Like from "./common/Like";
 
-const MoviesTable = props => {
-    const { movies, onLike, onDelete, onSort } = props;
-    return (
-        <table className="table">
-            <thead>
-                <tr>
-                    <th onClick={() => onSort("title")}>Title</th>
-                    <th onClick={() => onSort("genre.name")}>Genre</th>
-                    <th onClick={() => onSort("numberInStock")}>Stock</th>
-                    <th onClick={() => onSort("dailyRentalRate")}>Rate</th>
-                    <th />
-                    <th />
-                </tr>
-            </thead>
+class MoviesTable extends React.Component {
+  columns = [
+    { path: "title", label: "Title" },
+    { path: "genre.name", label: "Genre" },
+    { path: "numberInStock", label: "Stock" },
+    { path: "dailyRentalRate", label: "Rate" },
+    {
+      key: "like",
+      content: movie => (
+        <Like liked={movie.liked} onLike={() => this.props.onLike(movie)} />
+      )
+    },
+    {
+      key: "delete",
+      content: movie => (
+        <button
+          onClick={() => this.props.onDelete(movie)}
+          className="btn btn-danger btn-sm"
+        >
+          Delete
+        </button>
+      )
+    }
+  ];
 
-            <tbody>
-                {movies.map(movie => {
-                    return (
-                        <tr key={movie._id}>
-                            <td>{movie.title}</td>
-                            <td>{movie.genre.name}</td>
-                            <td>{movie.numberInStock}</td>
-                            <td>{movie.dailyRentalRate}</td>
-                            <td>
-                                <Like
-                                    liked={movie.liked}
-                                    onLike={() => onLike(movie)}
-                                />
-                            </td>
-                            <td>
-                                <button
-                                    onClick={() => onDelete(movie)}
-                                    className="btn btn-danger btn-sm"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </table>
+  render() {
+    const { movies, onSort, sortColumn } = this.props;
+    return (
+      <Table
+        columns={this.columns}
+        data={movies}
+        sortColumn={sortColumn}
+        onSort={onSort}
+      />
     );
-};
+  }
+}
 
 export default MoviesTable;
